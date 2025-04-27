@@ -5,9 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
-	"time"
 
-	zfs "github.com/bitomica/go-libzfs"
+	zfs "github.com/3l0w/go-libzfs"
 )
 
 /* ------------------------------------------------------------------------- */
@@ -383,7 +382,6 @@ func zpoolTestInitialization(t *testing.T) {
 		t.Error(err.Error())
 		return
 	}
-	time.Sleep(1 * time.Second)
 	err = pool.SuspendInitialization()
 	if err != nil {
 		t.Error(err.Error())
@@ -394,7 +392,6 @@ func zpoolTestInitialization(t *testing.T) {
 		t.Error(err.Error())
 		return
 	}
-	time.Sleep(1 * time.Second)
 	err = pool.CancelInitialization()
 	if err != nil {
 		t.Error(err.Error())
@@ -406,7 +403,7 @@ func zpoolTestInitialization(t *testing.T) {
 /* ------------------------------------------------------------------------- */
 // EXAMPLES:
 
-func ExamplePoolProp() {
+func ExampleProp() {
 	if pool, err := zfs.PoolOpen("SSD"); err == nil {
 		print("Pool size is: ", pool.Properties[zfs.PoolPropSize].Value)
 		// Turn on snapshot listing for pool

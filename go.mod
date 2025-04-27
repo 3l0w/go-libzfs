@@ -1,3 +1,3 @@
-module github.com/bitomica/go-libzfs
+module github.com/3l0w/go-libzfs
 
-go 1.13
+go 1.24

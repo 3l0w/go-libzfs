@@ -170,7 +170,7 @@ const (
 	PoolPropComment
 	PoolPropExpandsz
 	PoolPropFreeing
-	PoolPropFragmentaion
+	PoolPropFragmentation
 	PoolPropLeaked
 	PoolPropMaxBlockSize
 	PoolPropTName
@@ -179,6 +179,14 @@ const (
 	PoolPropCheckpoint
 	PoolPropLoadGuid
 	PoolPropAutotrim
+	PoolPropCompatibility
+	PoolPropBcloneused
+	PoolPropBclonesaved
+	PoolPropBcloneratio
+	PoolPropDedupTableSize
+	PoolPropDedupTableQuota
+	PoolPropDedupcached
+	PoolPropLastScrubbedTxg
 	PoolNumProps
 )
 

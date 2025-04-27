@@ -3,7 +3,7 @@ package zfs_test
 import (
 	"testing"
 
-	zfs "github.com/bitomica/go-libzfs"
+	zfs "github.com/3l0w/go-libzfs"
 )
 
 func TestDataset_DestroyPromote(t *testing.T) {
