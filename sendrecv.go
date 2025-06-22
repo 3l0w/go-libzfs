@@ -279,11 +279,7 @@ func (d *Dataset) SendSize(FromName string, flags SendFlags) (size int64, err er
 }
 
 // Receive - receive snapshot stream
-func (d *Dataset) Receive(inf *os.File, flags RecvFlags) (err error) {
-	var dpath string
-	if dpath, err = d.Path(); err != nil {
-		return
-	}
+func Receive(dpath string, inf *os.File, flags RecvFlags) (err error) {
 	props := C.new_property_nvlist()
 	if props == nil {
 		err = fmt.Errorf("Out of memory func (d *Dataset) Recv()")
@@ -298,6 +294,16 @@ func (d *Dataset) Receive(inf *os.File, flags RecvFlags) (err error) {
 	if ec != 0 {
 		err = fmt.Errorf("ZFS receive of %s failed. %s", C.GoString(dest), LastError().Error())
 	}
+	return
+}
+
+func (d *Dataset) Receive(inf *os.File, flags RecvFlags) (err error) {
+	var dpath string
+	if dpath, err = d.Path(); err != nil {
+		return
+	}
+
+	err = Receive(dpath, inf, flags)
 	return
 }
 
