@@ -12,6 +12,7 @@ import (
 var TSTDatasetPath = TSTPoolName + "/DATASET"
 var TSTVolumePath = TSTDatasetPath + "/VOLUME"
 var TSTDatasetPathSnap = TSTDatasetPath + "@test"
+var TSTDatasetPathBookmark = TSTDatasetPath + "#test"
 
 func printDatasets(ds []zfs.Dataset) error {
 	for _, d := range ds {
@@ -147,6 +148,24 @@ func zfsTestDatasetSnapshot(t *testing.T) {
 	print("PASS\n\n")
 }
 
+func zfsTestDatasetBookmark(t *testing.T) {
+	println("TEST Bookmark(", TSTDatasetPath, ", true, ...) ... ")
+	d, err := zfs.DatasetOpen(TSTDatasetPathSnap)
+	defer d.Close()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = d.Bookmark(TSTDatasetPathBookmark)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	zfsTestDatasetOpenAll(t)
+	print("PASS\n\n")
+}
+
 func zfsTestDatasetHoldRelease(t *testing.T) {
 	println("TEST Hold/Release(", TSTDatasetPathSnap, ", true, ...) ... ")
 	d, err := zfs.DatasetOpen(TSTDatasetPathSnap)
@@ -218,6 +237,23 @@ func zfsTestResumeTokenUnpack(t *testing.T) {
 	}
 	println("ResumeToken:", fmt.Sprintf("%v", resToken))
 	return
+}
+
+func zfsTestDatasetDestroyBookmark(t *testing.T) {
+	println("TEST BOOKMARK Destroy(", TSTDatasetPath, ", true, ...) ... ")
+	d, err := zfs.DatasetOpen(TSTDatasetPathBookmark)
+	defer d.Close()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = d.Destroy(false)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	print("PASS\n\n")
 }
 
 func zfsTestDatasetDestroy(t *testing.T) {

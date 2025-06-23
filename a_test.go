@@ -29,6 +29,8 @@ func Test(t *testing.T) {
 	zfsTestResumeTokenUnpack(t)
 
 	zfsTestDatasetSnapshot(t)
+	zfsTestDatasetBookmark(t)
+	zfsTestDatasetDestroyBookmark(t)
 	zfsTestSendSize(t)
 	zfsTestDatasetOpenAll(t)
 	zfsTestDatasetSetProperty(t)

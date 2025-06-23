@@ -4,6 +4,7 @@
 
 #include <libzfs.h>
 #include <libzfs/libzfs.h>
+#include <libzfs/libzfs_core.h>
 #include <memory.h>
 #include <string.h>
 #include <stdio.h>
@@ -74,7 +75,7 @@ int dataset_type(dataset_list_ptr dataset) {
 
 dataset_list_ptr dataset_open(const char *path) {
 	dataset_list_ptr list = create_dataset_list_item();
-	list->zh = zfs_open(libzfsHandle, path, 0xF);
+	list->zh = zfs_open(libzfsHandle, path, 0x1F);
 	if (list->zh == NULL) {
 		dataset_list_free(list);
 		list = NULL;
@@ -94,6 +95,12 @@ dataset_list_t *dataset_list_children(dataset_list_t *dataset) {
 	int err = 0;
 	dataset_list_t *zlist = create_dataset_list_item();
 	err = zfs_iter_children(dataset->zh, dataset_list_callb, &zlist);
+	if ( err != 0  || zlist->zh == NULL) {
+		dataset_list_free(zlist);
+		return NULL;
+	}
+
+	err = zfs_iter_bookmarks(dataset->zh, dataset_list_callb, &zlist);
 	if ( err != 0  || zlist->zh == NULL) {
 		dataset_list_free(zlist);
 		return NULL;
@@ -139,6 +146,14 @@ int dataset_rename(dataset_list_ptr dataset, const char* new_name, boolean_t rec
   rename_flags.recursive = recur ? 1 : 0;
   rename_flags.nounmount = 0;
 	return zfs_rename(dataset->zh, new_name, rename_flags);
+}
+
+int dataset_bookmark(const char* path, const char* bookpath) {
+	nvlist_t *nvl = fnvlist_alloc();
+	fnvlist_add_string(nvl, bookpath, path);
+	int ret = lzc_bookmark(nvl, NULL);
+	fnvlist_free(nvl);
+	return ret;
 }
 
 const char *dataset_is_mounted(dataset_list_ptr dataset){

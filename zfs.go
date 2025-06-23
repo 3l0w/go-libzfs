@@ -526,6 +526,45 @@ func (d *Dataset) Rename(newName string, recur,
 	return
 }
 
+// Create a bookmark
+func (d *Dataset) Bookmark(name string) (err error) {
+	if !d.IsSnapshot() {
+		return errors.New("You can only create a bookmark on a snapshot")
+	}
+
+	var path string
+	if path, err = d.Path(); err != nil {
+		return
+	}
+	cPath := C.CString(path)
+	cName := C.CString(name)
+
+	ret := C.dataset_bookmark(cPath, cName)
+	if ret != 0 {
+		var err_msg string
+		switch ret {
+		case C.EXDEV:
+			err_msg = "bookmark is in a different pool"
+		case C.ZFS_ERR_BOOKMARK_SOURCE_NOT_ANCESTOR:
+			err_msg = "source is not an ancestor of the new bookmark's dataset"
+		case C.EEXIST:
+			err_msg = "bookmark exists"
+		case C.EINVAL:
+			err_msg = "invalid argument"
+		case C.ENOTSUP:
+			err_msg = "bookmark feature not enabled"
+		case C.ENOSPC:
+			err_msg = "out of space"
+		case C.ENOENT:
+			err_msg = "dataset does not exist"
+		default:
+			err_msg = "unknown error"
+		}
+		err = errors.New(err_msg)
+	}
+	return
+}
+
 // IsMounted checks to see if the mount is active.  If the filesystem is mounted,
 // sets in 'where' argument the current mountpoint, and returns true.  Otherwise,
 // returns false.
